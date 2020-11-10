@@ -3,6 +3,7 @@
 # =============== #
 Temp/
 Obj/
+obj/
 UnityGenerated/
 Library/
 Assets/AssetStoreTools*
@@ -35,3 +36,4 @@ ExportedObj/
 Icon?
 ehthumbs.db
 Thumbs.db
+.gitignore.swp
