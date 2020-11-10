@@ -8,10 +8,9 @@ public class Database : MonoBehaviour
 {
     // DEBUG MODE
     // This is somewhat necessitated by the WWW weirdness on webGL.
-    private bool DEBUG = false;
+    private bool DEBUG = true;
 
     // Database settings.
-    // NOTE: Make sure to fill out the correct keys and URLs here!
     private string secretKey = "";
     private string getParticipantURL = "";
     private string addParticipantURL = "";
@@ -123,20 +122,20 @@ public class Database : MonoBehaviour
         int trial_onset, int stimulus_onset, int stimulus_offset,
         int resp_onset, int resp_offset, string stim_x, string stim_y,
         string stim_ori, int target_nr, string nontarget_ori, int target_ori,
-        int resp_ori, int rt)
+        int resp_ori, int error, int rt)
     {
         // Start the coroutine, and ignore the callback.
         StartCoroutine(PostMemoryTaskTrial(participant_id, trialnr, nstim,
             trial_onset, stimulus_onset, stimulus_offset, resp_onset,
             resp_offset, stim_x, stim_y, stim_ori, target_nr, nontarget_ori,
-            target_ori, resp_ori, rt, result => {}));
+            target_ori, resp_ori, error, rt, result => {}));
     }
 
     public IEnumerator PostMemoryTaskTrial(int participant_id, int trialnr,
         int nstim, int trial_onset, int stimulus_onset, int stimulus_offset,
         int resp_onset, int resp_offset, string stim_x, string stim_y,
         string stim_ori, int target_nr, string nontarget_ori, int target_ori,
-        int resp_ori, int rt, System.Action<string> callback)
+        int resp_ori, int error, int rt, System.Action<string> callback)
     {
         //This connects to a server side PHP script that will add the
         // participant info to a MySQL database.
@@ -161,6 +160,7 @@ public class Database : MonoBehaviour
             "&nontarget_ori=" + WWW.EscapeURL(nontarget_ori) +
             "&target_ori=" + target_ori +
             "&resp_ori=" + resp_ori +
+            "&error=" + error +
             "&rt=" + rt +
             "&hash=" + hash;
 
@@ -198,21 +198,6 @@ public class Database : MonoBehaviour
                 callback(post.text);
             }
         }
-
-        // Alternative approach using UnityWebRequest (WWW is deprecated).
-        //using (UnityWebRequest pp_post = UnityWebRequest.Get(post_url))
-        //{
-        //    yield return pp_post.Send();
-
-        //    if (pp_post.isNetworkError) // Error
-        //    {
-        //        Debug.Log(pp_post.error);
-        //    }
-        //    else // Success
-        //    {
-        //        Debug.Log(pp_post.downloadHandler.text);
-        //    }
-        //}
     }
 
 }

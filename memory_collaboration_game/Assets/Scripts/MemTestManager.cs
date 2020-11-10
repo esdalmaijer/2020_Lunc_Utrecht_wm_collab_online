@@ -31,6 +31,7 @@ public class MemTestManager : MonoBehaviour
     private bool trialRunning = false;
     private bool responsePhase = false;
     private bool responseRecorded = false;
+    private int respError = -999;
     // Stimuli.
     private List<Gabor> stimList = new List<Gabor>();
     private int[] stimOri;
@@ -132,11 +133,6 @@ public class MemTestManager : MonoBehaviour
                 RecordResponse();
                 responsePhase = false;
             }
-            // Compute circular error.
-            int responseOri = (int)stimList[targetStimNr].GetOrientation();
-            int error = ComputeCircularDifference(stimOri[targetStimNr] + 180,
-                responseOri + 180, 180);
-            Debug.Log(stimOri[targetStimNr].ToString() + " - " + responseOri.ToString() + " = " + error.ToString());
         }
 
         // TIMESTAMPS
@@ -182,11 +178,15 @@ public class MemTestManager : MonoBehaviour
         StartResponsePhase();
 
         // Wait for response.
+        respError = -999;
         responseRecorded = false;
         yield return new WaitUntil(() => responseRecorded);
 
         // Remove the stimuli.
         DeleteStimuli();
+
+        // TODO: Show feedback. You can use the respError variable for this,
+        // as it was updated when the response was recorded.
 
         // Wait for the inter-trial interval (randomly chosen between min/max).
         System.Random rand = new System.Random();
@@ -251,10 +251,12 @@ public class MemTestManager : MonoBehaviour
 
     private void HideStimuli()
     {
-        // Turn on the mask.
+        // Turn on the mask, and set all stimulus orientations to 0, so that
+        // the mask orientation does not give any information away.
         foreach (Gabor stim in stimList)
         {
             stim.SetMasked(true);
+            stim.SetOrientation(0.0f);
         }
         // Record stimulus onset time.
         updateKey = "stimOffset";
@@ -306,11 +308,12 @@ public class MemTestManager : MonoBehaviour
             }
         }
         string nontarget_ori = "[" + String.Join(";", nontargetOri) + "]";
-        // Compute circular error.
+        // Get the orientation of the user-rotated stimulus.
         int responseOri = (int)stimList[targetStimNr].GetOrientation();
-        int error = ComputeCircularDifference(stimOri[targetStimNr]+180,
+        // Compute circular error. We add 180 here to transfor the space from
+        // range (-180, 180) to (0, 360). Bit easier.
+        respError = ComputeCircularDifference(stimOri[targetStimNr]+180,
             responseOri+180, 180);
-        Debug.Log(stimOri[targetStimNr].ToString() + " - " + responseOri.ToString() + " = " + error.ToString());
         // Compute response time in milliseconds.
         int response_time = (int)(1000 * (trialTiming["respOffset"] -
             trialTiming["respOnset"]));
@@ -323,8 +326,7 @@ public class MemTestManager : MonoBehaviour
             (int)(trialTiming["respOnset"] * 1000.0f),
             (int)(trialTiming["respOffset"] * 1000.0f),
             stim_x, stim_y, stim_ori, targetStimNr, nontarget_ori,
-            stimOri[targetStimNr], responseOri,
-            response_time);
+            stimOri[targetStimNr], responseOri, respError, response_time);
         // Flip the response recorded bool.
         responseRecorded = true;
     }
