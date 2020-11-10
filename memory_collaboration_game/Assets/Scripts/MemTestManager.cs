@@ -132,6 +132,11 @@ public class MemTestManager : MonoBehaviour
                 RecordResponse();
                 responsePhase = false;
             }
+            // Compute circular error.
+            int responseOri = (int)stimList[targetStimNr].GetOrientation();
+            int error = ComputeCircularDifference(stimOri[targetStimNr] + 180,
+                responseOri + 180, 180);
+            Debug.Log(stimOri[targetStimNr].ToString() + " - " + responseOri.ToString() + " = " + error.ToString());
         }
 
         // TIMESTAMPS
@@ -301,6 +306,11 @@ public class MemTestManager : MonoBehaviour
             }
         }
         string nontarget_ori = "[" + String.Join(";", nontargetOri) + "]";
+        // Compute circular error.
+        int responseOri = (int)stimList[targetStimNr].GetOrientation();
+        int error = ComputeCircularDifference(stimOri[targetStimNr]+180,
+            responseOri+180, 180);
+        Debug.Log(stimOri[targetStimNr].ToString() + " - " + responseOri.ToString() + " = " + error.ToString());
         // Compute response time in milliseconds.
         int response_time = (int)(1000 * (trialTiming["respOffset"] -
             trialTiming["respOnset"]));
@@ -313,7 +323,7 @@ public class MemTestManager : MonoBehaviour
             (int)(trialTiming["respOnset"] * 1000.0f),
             (int)(trialTiming["respOffset"] * 1000.0f),
             stim_x, stim_y, stim_ori, targetStimNr, nontarget_ori,
-            stimOri[targetStimNr], (int)stimList[targetStimNr].GetOrientation(),
+            stimOri[targetStimNr], responseOri,
             response_time);
         // Flip the response recorded bool.
         responseRecorded = true;
@@ -408,5 +418,15 @@ public class MemTestManager : MonoBehaviour
             }
         }
         return stimOri;
+    }
+
+    private int ComputeCircularDifference(int ori1, int ori2, int zero)
+    {
+        float error = (float)Math.Abs(ori1 - ori2) % zero;
+
+        if (error > zero/2)
+            error = zero - error;
+
+        return (int)error;
     }
 }
