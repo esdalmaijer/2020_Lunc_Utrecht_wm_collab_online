@@ -313,7 +313,7 @@ public class MemTestManager : MonoBehaviour
             feedbackPrefab.changetarget(false);
             coinList.Add(Instantiate(feedbackPrefab, coinposition, transform.rotation));
         }
-        // store ncoins in list/ something else so it does not change. it should add up 
+        // store number of coins in variable nCoins
         nCoins = nCoins + coinList.Count;
     }
 
