@@ -162,6 +162,31 @@ public class Gabor : MonoBehaviour
         return angle;
     }
 
+    public (int, int) GetPosition()
+    {
+        // Get the current position (in the world).
+        Vector3 myPos = transform.position;
+
+        // Compute the pixel-to-world conversion.
+        float yWorldUnits = Camera.main.orthographicSize * 2;
+        float xWorldUnits = yWorldUnits * Screen.width / Screen.height;
+        float xWorldToPixel = Screen.width / xWorldUnits;
+        float yWorldToPixel = Screen.height / yWorldUnits;
+
+        // Compute the position in pixels.
+        float x = myPos.x;
+        x -= Camera.main.transform.position.x;
+        x += (xWorldUnits / 2.0f);
+        x *= xWorldToPixel;
+
+        float y = myPos.y;
+        y -= Camera.main.transform.position.y;
+        y += (yWorldUnits / 2.0f);
+        y *= yWorldToPixel;
+
+        return ((int)x, (int)y);
+    }
+
     public int GetOwner()
     {
         return owner;

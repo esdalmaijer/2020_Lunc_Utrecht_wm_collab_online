@@ -48,7 +48,7 @@ public class RegistrationPage : MonoBehaviour
         confirmationButton = transform.Find("Confirmation Button").gameObject;
         confirmationButtonSprite = confirmationButton.GetComponent<SpriteRenderer>();
         // Add this registration as the parent to the confirmation button.
-        confirmationButton.AddComponent<ConfirmButton>().parent = this;
+        confirmationButton.AddComponent<RegistrationConfirmButton>().parent = this;
         // Deactive the button for now.
         confirmationButton.SetActive(false);
 
@@ -66,6 +66,43 @@ public class RegistrationPage : MonoBehaviour
             PlayerPrefs.SetString("GUID", participantGUID);
             PlayerPrefs.Save();
         }
+
+        // ROUND ORDER
+        // Start the rounds at 0.
+        PlayerPrefs.SetInt("gameRoundNr", 0);
+
+        // Set opponent memory capacity. This is defined in standard deviations
+        // from the player's performance during the memory test.
+        List<float> capacityOptions = new List<float>() { 1.25f, 1.0f, 0.75f };
+        List<string> capacityOptionsRandomised = new List<string>();
+        System.Random rand = new System.Random();
+        int iterations = capacityOptions.Count;
+        for (int i = 0; i < iterations; i++)
+        {
+            // Randomly choose an index from the options.
+            int index = rand.Next(capacityOptions.Count);
+            // Set the capacity.
+            capacityOptionsRandomised.Add(capacityOptions[index].ToString());
+            // Remove the chosen option.
+            capacityOptions.RemoveAt(index);
+        }
+        string capacityOrderString = string.Join(";", capacityOptionsRandomised);
+        PlayerPrefs.SetString("gameCapacityOrder", capacityOrderString);
+
+        // Set the opponent strategy. This refers to what items they will
+        // choose, and can be set to "closest" to make the opponent always
+        // choose the closest unclaimed stimulus, or "random" to make them
+        // choose one of the unclaimed stimuli at random.
+        string[] strategyOptions = {"closest", "random"};
+        List<string> strategyOptionsRandomised = new List<string>();
+        for (int i = 0; i < capacityOptionsRandomised.Count; i++)
+        {
+            strategyOptionsRandomised.Add(
+                strategyOptions[rand.Next(strategyOptions.Length)]);
+        }
+        string strategyOrderString = string.Join(";", strategyOptionsRandomised);
+        PlayerPrefs.SetString("gameStrategyOrder", strategyOrderString);
+        
 
         // GET PARTICIPANT NUMBER FROM DATABASE
         // Check if the GUID exists in the database.

@@ -19,30 +19,30 @@ public class Coin : MonoBehaviour
 
     public void changetarget(bool Scene03)
     {
-        if(Scene03 == true)
-        {
+        //if(Scene03 == true)
+        //{
             
-            target = new Vector3(1, -3, 0) + Random.insideUnitSphere * 1;
-        }
-        if(Scene03 == false)
-        {
-            target.x = 9f;
-            target.y = -5f;
-        }
+        //    target = new Vector3(1, -3, 0) + Random.insideUnitSphere * 1;
+        //}
+        //if(Scene03 == false)
+        //{
+        //    target.x = 9f;
+        //    target.y = -5f;
+        //}
     }
 
         // Update is called once per frame
     void Update()
     {
         
-        Vector2 position = transform.position;
-        Vector2 endPosition = new Vector2(position.x,-2);
+        //Vector2 position = transform.position;
+        //Vector2 endPosition = new Vector2(position.x,-2);
 
-        if(position != endPosition) {
+        //if(position != endPosition) {
             
-            float step = speed * Time.deltaTime;
-            transform.position = Vector2.MoveTowards(transform.position, target, step);
-        }
+        //    float step = speed * Time.deltaTime;
+        //    transform.position = Vector2.MoveTowards(transform.position, target, step);
+        //}
     }
 
    

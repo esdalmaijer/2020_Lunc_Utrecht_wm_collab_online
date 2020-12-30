@@ -10,9 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 5065731312725300284}
   - component: {fileID: 5065731312725300283}
-  - component: {fileID: 5065731312725300282}
   - component: {fileID: 7448632768399780942}
   - component: {fileID: -5584938886293720999}
+  - component: {fileID: 6603237774960893481}
   m_Layer: 0
   m_Name: Gold_CoinPrefab
   m_TagString: Untagged
@@ -29,7 +29,7 @@ Transform:
   m_GameObject: {fileID: 5065731312725300281}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -6, y: 3, z: 1}
-  m_LocalScale: {x: 0.3, y: 0.3, z: 1}
+  m_LocalScale: {x: 0.12, y: 0.12, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -74,7 +74,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
-  m_Sprite: {fileID: 21300000, guid: 415d67cdc3b3bbd4db9843ce425e99c7, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 5f3675ddfd19d4b96a84a47d5cda9641, type: 3}
   m_Color: {r: 0.9339623, g: 0.89343184, b: 0.89343184, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -85,19 +85,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 1
---- !u!114 &5065731312725300282
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5065731312725300281}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3539fcfcec4e90f40bec37d752bf6dee, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  target: {x: -2, y: -4}
 --- !u!61 &7448632768399780942
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -114,7 +101,7 @@ BoxCollider2D:
   m_Offset: {x: -4, y: 4}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 1, y: 0}
+    pivot: {x: 0.5, y: 0.5}
     oldSize: {x: 8, y: 8}
     newSize: {x: 8, y: 8}
     adaptiveTilingThreshold: 0.5
@@ -134,7 +121,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: c24e0678351a0214ab74d38e8c0f026f, type: 3}
+  m_audioClip: {fileID: 8300000, guid: 6e1b9bbeba89440fea9afbe1098a0a17, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
@@ -220,3 +207,16 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &6603237774960893481
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5065731312725300281}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f3562fac82b024ab4b918a48262a7aff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  target: {x: 6, y: -4}

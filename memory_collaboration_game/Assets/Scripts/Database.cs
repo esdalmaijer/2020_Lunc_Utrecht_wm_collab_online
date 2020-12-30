@@ -14,7 +14,10 @@ public class Database : MonoBehaviour
     private string secretKey = "";
     private string getParticipantURL = "";
     private string addParticipantURL = "";
+    private string updateParticipantURL = "";
     private string addMemoryTrialURL = "";
+    private string addMemoryGameTrialURL = "";
+    private string addRatingURL = "";
 
     // Variables.
     public int participantNr = -1;
@@ -117,6 +120,31 @@ public class Database : MonoBehaviour
         }));
     }
 
+    // Convenience function for hitting and quiting the participant
+    // coroutine, without waiting for the callback.
+    public void AddParticipantCapacity(int participant_nr, float capacity)
+    {
+        StartCoroutine(PostParticipantCapacity(participant_nr, capacity,
+            callback => { }));
+    }
+
+    public IEnumerator PostParticipantCapacity(int participant_nr,
+        float capacity, System.Action<string> callback)
+    {
+        // Construct a hash that will be compared server-side.
+        string hash = Md5Sum(participant_nr.ToString() + secretKey);
+        // Construct the URL to submit data to the PHP script with.
+        string url = updateParticipantURL +
+            "participant_nr=" + participant_nr +
+            "&capacity=" + capacity +
+            "&hash=" + hash;
+
+        // Start the posting coroutine, and simply pass on its result.
+        yield return StartCoroutine(PostURL(url, result => {
+            callback(result);
+        }));
+    }
+
     // Convenience function for hitting and quiting the trial coroutine.
     public void LogMemoryTaskTrial(int participant_id, int trialnr, int nstim,
         int trial_onset, int stimulus_onset, int stimulus_offset,
@@ -162,6 +190,101 @@ public class Database : MonoBehaviour
             "&resp_ori=" + resp_ori +
             "&error=" + error +
             "&rt=" + rt +
+            "&hash=" + hash;
+
+        // Start the posting coroutine, and simply pass on its result.
+        yield return StartCoroutine(PostURL(url, result => {
+            callback(result);
+        }));
+    }
+
+    // Convenience function for hitting and quiting the trial coroutine.
+    public void LogMemoryGameTrial(int participant_id, int roundnr,
+        float opponent_capacity, string opponent_strategy, int trialnr,
+        int nstim, int trial_onset, int stimulus_onset, int stimulus_offset,
+        int resp_onset, int resp_offset, string stim_x, string stim_y,
+        string stim_ori, int target_nr, string nontarget_ori, int target_ori,
+        int resp_ori, int error, int rt, string player_claimed,
+        string opponent_claimed, int opponent_error)
+    {
+        // Start the coroutine, and ignore the callback.
+        StartCoroutine(PostMemoryGameTrial(participant_id, roundnr,
+            opponent_capacity, opponent_strategy, trialnr, nstim, trial_onset,
+            stimulus_onset, stimulus_offset, resp_onset, resp_offset, stim_x,
+            stim_y, stim_ori, target_nr, nontarget_ori, target_ori, resp_ori,
+            error, rt, player_claimed, opponent_claimed, opponent_error,
+            result => { }));
+    }
+
+    public IEnumerator PostMemoryGameTrial(int participant_id, int roundnr,
+        float opponent_capacity, string opponent_strategy, int trialnr,
+        int nstim, int trial_onset, int stimulus_onset, int stimulus_offset,
+        int resp_onset, int resp_offset, string stim_x, string stim_y,
+        string stim_ori, int target_nr, string nontarget_ori, int target_ori,
+        int resp_ori, int error, int rt, string player_claimed,
+        string opponent_claimed, int opponent_error,
+        System.Action<string> callback)
+    {
+        //This connects to a server side PHP script that will add the
+        // participant info to a MySQL database.
+
+        // Construct a hash that will be compared server-side.
+        string hash = Md5Sum(participant_id.ToString() + trialnr.ToString() +
+            trial_onset.ToString() + stim_ori + player_claimed + secretKey);
+        // Construct the URL to submit data to the PHP script with.
+        string url = addMemoryGameTrialURL +
+            "participant_id=" + participant_id +
+            "&roundnr=" + roundnr +
+            "&opponent_capacity=" + opponent_capacity +
+            "&opponent_strategy=" + WWW.EscapeURL(opponent_strategy) +
+            "&trialnr=" + trialnr +
+            "&nstim=" + nstim +
+            "&trial_onset=" + trial_onset +
+            "&stimulus_onset=" + stimulus_onset +
+            "&stimulus_offset=" + stimulus_offset +
+            "&resp_onset=" + resp_onset +
+            "&resp_offset=" + resp_offset +
+            "&stim_x=" + WWW.EscapeURL(stim_x) +
+            "&stim_y=" + WWW.EscapeURL(stim_y) +
+            "&stim_ori=" + WWW.EscapeURL(stim_ori) +
+            "&target_nr=" + target_nr +
+            "&nontarget_ori=" + WWW.EscapeURL(nontarget_ori) +
+            "&target_ori=" + target_ori +
+            "&resp_ori=" + resp_ori +
+            "&error=" + error +
+            "&rt=" + rt +
+            "&player_claimed=" + WWW.EscapeURL(player_claimed) +
+            "&opponent_claimed=" + WWW.EscapeURL(opponent_claimed) +
+            "&opponent_error=" + opponent_error +
+            "&hash=" + hash;
+
+        // Start the posting coroutine, and simply pass on its result.
+        yield return StartCoroutine(PostURL(url, result => {
+            callback(result);
+        }));
+    }
+
+    // Convenience function for hitting and quiting the participant
+    // coroutine, without waiting for the callback.
+    public void LogRating(int participant_id, int roundnr,
+        int questionnr, int response)
+    {
+        StartCoroutine(PostRating(participant_id, roundnr, questionnr,
+            response, callback => { }));
+    }
+
+    public IEnumerator PostRating(int participant_id, int roundnr,
+        int questionnr, int response, System.Action<string> callback)
+    {
+        // Construct a hash that will be compared server-side.
+        string hash = Md5Sum(participant_id.ToString() + roundnr.ToString() +
+            questionnr.ToString() + response.ToString() + secretKey);
+        // Construct the URL to submit data to the PHP script with.
+        string url = addRatingURL +
+            "participant_id=" + participant_id +
+            "&roundnr=" + roundnr +
+            "&questionnr=" + questionnr +
+            "&response=" + response +
             "&hash=" + hash;
 
         // Start the posting coroutine, and simply pass on its result.

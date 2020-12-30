@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1145523941287464977}
   - component: {fileID: 2192531873645410243}
-  - component: {fileID: 1128562913102452375}
+  - component: {fileID: -8471291978755930801}
   m_Layer: 0
   m_Name: Treasure_Box_frontPrefab
   m_TagString: Untagged
@@ -27,7 +27,7 @@ Transform:
   m_GameObject: {fileID: 3672639851631096754}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 10, y: -7, z: 0}
-  m_LocalScale: {x: 2, y: 2, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -72,7 +72,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 2
-  m_Sprite: {fileID: 21300000, guid: 647d79d09afe1e042ae3be99eb89a634, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 5f9796d6ed681479bb1c703a41512eac, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -83,7 +83,7 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 1
---- !u!114 &1128562913102452375
+--- !u!114 &-8471291978755930801
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -92,6 +92,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 3672639851631096754}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a553f60aaff822d479518b3bd5041ece, type: 3}
+  m_Script: {fileID: 11500000, guid: 3023e1485827b42f2937efc515d7d3b3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
