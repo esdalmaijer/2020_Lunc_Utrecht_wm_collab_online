@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Web;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -52,20 +53,44 @@ public class RegistrationPage : MonoBehaviour
         // Deactive the button for now.
         confirmationButton.SetActive(false);
 
-        // CHECK OR CREATE UNIQUE ID
-        // Check if a GUID is in the PlayerPrefs.
-        if (PlayerPrefs.HasKey("GUID"))
+        // LOAD OR CREATE A UNIQUE ID
+        // Check if there is a Prolific ID in the URL.
+        string thisPageURL = Application.absoluteURL;
+        Debug.Log("Page URL: " + thisPageURL);
+        if (thisPageURL.ToLower().Contains("prolific_pid"))
         {
-            // Grab the GUID from the PlayerPrefs.
-            participantGUID = PlayerPrefs.GetString("GUID");
+            // If there is an ID in the URL, use this as GUID.
+            Uri thisPageUri = new Uri(thisPageURL.ToLower());
+            participantGUID = System.Web.HttpUtility.ParseQueryString(
+                thisPageUri.Query).Get("prolific_pid");
+            // Set the Boolean that indicates the participant came
+            // from Prolific.
+            PlayerPrefs.SetInt("isProlificParticipant", 1);
+
         }
-        // Create a new GUID and add it to the PlayerPrefs.
+        // If there isn't an ID in the URL, use a GUID.
         else
         {
-            participantGUID = Guid.NewGuid().ToString();
-            PlayerPrefs.SetString("GUID", participantGUID);
-            PlayerPrefs.Save();
+            // Set the Boolean that indicates the participant came
+            // from Prolific.
+            PlayerPrefs.SetInt("isProlificParticipant", 0);
+
+            // Check if a GUID is already in the PlayerPrefs.
+            if (PlayerPrefs.HasKey("GUID"))
+            {
+                // Grab the GUID from the PlayerPrefs.
+                participantGUID = PlayerPrefs.GetString("GUID");
+            }
+            // Create a new GUID.
+            else
+            {
+                participantGUID = Guid.NewGuid().ToString();
+            }
         }
+        // Store the ID in the PlayerPrefs.
+        Debug.Log("Participant ID: " + participantGUID);
+        PlayerPrefs.SetString("GUID", participantGUID);
+        PlayerPrefs.Save();
 
         // ROUND ORDER
         // Start the rounds at 0.
@@ -88,6 +113,7 @@ public class RegistrationPage : MonoBehaviour
         }
         string capacityOrderString = string.Join(";", capacityOptionsRandomised);
         PlayerPrefs.SetString("gameCapacityOrder", capacityOrderString);
+        PlayerPrefs.Save();
 
         // Set the opponent strategy. This refers to what items they will
         // choose, and can be set to "closest" to make the opponent always
@@ -100,9 +126,21 @@ public class RegistrationPage : MonoBehaviour
             strategyOptionsRandomised.Add(
                 strategyOptions[rand.Next(strategyOptions.Length)]);
         }
+        // If an option was left out, randomly select one of the rounds
+        // and replace it with the left-out option.
+        foreach (string option in strategyOptions)
+        {
+            if (!strategyOptionsRandomised.Contains(option))
+            {
+                int i = rand.Next(strategyOptionsRandomised.Count);
+                strategyOptionsRandomised[i] = option;
+            }
+        }
+        // Convert list to string.
         string strategyOrderString = string.Join(";", strategyOptionsRandomised);
         PlayerPrefs.SetString("gameStrategyOrder", strategyOrderString);
-        
+        PlayerPrefs.Save();
+        Debug.Log(strategyOrderString);
 
         // GET PARTICIPANT NUMBER FROM DATABASE
         // Check if the GUID exists in the database.

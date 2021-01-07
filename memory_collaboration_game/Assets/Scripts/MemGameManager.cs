@@ -11,12 +11,14 @@ public class MemGameManager : MonoBehaviour
     [SerializeField] int nTrials;
     [SerializeField] int nMultiplayerRounds;
     [SerializeField] int[] nStim = {2,4};
-    [SerializeField] int minDist = 200;
+    [SerializeField] int minDist = 100;
     [SerializeField] int minOriDist = 10;
     [SerializeField] float stimDuration = 5.0f;
     [SerializeField] float maintenanceDuration = 3.0f;
     [SerializeField] float[] interTrialIntervalMinMax = {1.0f, 1.5f};
-    [SerializeField] float[] interClaimTimeMinMax = { 0.3f, 2.0f };
+    [SerializeField] float[] interClaimTimeMinMax = { 3.0f, 6.5f };
+    [SerializeField] float[] opponentWaitUnderHalfMinMax = { 3.0f, 8.0f };
+    [SerializeField] float[] opponentWaitOverHalfMinMax = { 20.0f, 40.0f };
     [SerializeField] float[] loadingTimeMinMax = { 2.5f, 10.0f };
     [SerializeField] Gabor stimulusPrefab;
     [SerializeField] Database dataLogger;
@@ -46,7 +48,7 @@ public class MemGameManager : MonoBehaviour
     private bool allStimuliClaimed;
     // Maximum number of iterations while finding random numbers with
     // pre-defined conditions.
-    private int maxIter = 1000;
+    private int maxIter = 10000;
     // Loading.
     private bool loadingFinished = false;
     private bool loadSpinnerSpinning = false;
@@ -111,8 +113,8 @@ public class MemGameManager : MonoBehaviour
     private string[] ratingQuestionTexts = {
         "How good was the collaboration between you and your crewmate?", 
         "How likable did you find your crewmate?",
-        "How fair did you think your cremate was?",
-        "How good did you think your cremate's memory was?"};
+        "How fair did you think your crewmate was?",
+        "How good did you think your crewmate's memory was?"};
 
     // Start is called before the first frame update
     void Start()
@@ -122,7 +124,7 @@ public class MemGameManager : MonoBehaviour
 
         // Get the participant number.
         participantID = PlayerPrefs.GetInt("PPNR");
-        Debug.Log("Player number: " + participantID.ToString());
+        //Debug.Log("Player number: " + participantID.ToString());
 
         // Get the player's and opponent's stats.
         if (multiPlayer)
@@ -145,29 +147,29 @@ public class MemGameManager : MonoBehaviour
 
             // Get the current game round.
             int round = PlayerPrefs.GetInt("gameRoundNr");
-            Debug.Log("Round: " + round.ToString());
+            //Debug.Log("Round: " + round.ToString());
 
             // Get player visual short-term memory capacity.
             playerCapacity = PlayerPrefs.GetFloat("playerCapacity");
-            Debug.Log("Player capacity: " + playerCapacity.ToString());
+            //Debug.Log("Player capacity: " + playerCapacity.ToString());
 
             // Get the opponent's short-term memory capacity.
             string capacityOrder = PlayerPrefs.GetString("gameCapacityOrder");
             string[] capacityOrderArray = capacityOrder.Split(';');
             float opponentCapacityMultiplier = Convert.ToSingle(capacityOrderArray[round]);
             opponentCapacity = playerCapacity * opponentCapacityMultiplier;
-            Debug.Log("Round Capacities: " + capacityOrder);
-            Debug.Log("Opponent Capacity: " + opponentCapacity.ToString());
+            //Debug.Log("Round Capacities: " + capacityOrder);
+            //Debug.Log("Opponent Capacity: " + opponentCapacity.ToString());
 
             // Get the opponent's strategy.
             string strategyOrder = PlayerPrefs.GetString("gameStrategyOrder");
             string[] strategyOrderArray = strategyOrder.Split(';');
             opponentStrategy = strategyOrderArray[round];
-            Debug.Log("Round Strategies: " + strategyOrder);
-            Debug.Log("Opponent strategy: " + opponentStrategy.ToString());
+            //Debug.Log("Round Strategies: " + strategyOrder);
+            //Debug.Log("Opponent strategy: " + opponentStrategy.ToString());
 
             // Randomly choose an opponent number.
-            int opponentID = rand.Next(participantID + round * 7,
+            int opponentID = rand.Next(participantID + 1 + round * 7,
                 participantID + (round+1) * 7);
             // Randomly choose loading duration.
             float loadingDuration = loadingTimeMinMax[0] +
@@ -404,19 +406,20 @@ public class MemGameManager : MonoBehaviour
                     Mathf.Deg2Rad;
                 // Look up the DKL associated with this error SD.
                 double dkl = capacityComputer.MatchCapacity(std);
-                Debug.Log("SD=" + std.ToString() + ", DKL=" + dkl.ToString());
+                //Debug.Log("SD=" + std.ToString() + ", DKL=" + dkl.ToString());
                 // Multiply the DKL by the number of stimuli to compute the
                 // full capacity.
                 estimatedCapacities += (dkl * setSize);
             }
             // Compute the average estimates capacity.
             estimatedCapacities /= nStim.Length;
-            Debug.Log("capacity=" + estimatedCapacities.ToString());
+            //Debug.Log("capacity=" + estimatedCapacities.ToString());
             // Save the player's capacity.
             PlayerPrefs.SetFloat("playerCapacity", (float)estimatedCapacities);
+            PlayerPrefs.Save();
 
             // Log the capacity to the database, and then load the next scene.
-            Debug.Log("Adding capacity to the database.");
+            //Debug.Log("Adding capacity to the database.");
             bool uploadCompleted = false;
             StartCoroutine(dataLogger.PostParticipantCapacity(participantID,
                 PlayerPrefs.GetFloat("playerCapacity"),
@@ -433,15 +436,14 @@ public class MemGameManager : MonoBehaviour
         else
         {
             // Start rating.
-            Debug.Log("Starting the ratings...");
             StartCoroutine(RunRatings());
             // Wait until the ratings are completed.
             yield return new WaitUntil(() => ratingsCompleted);
-            Debug.Log("Ratings completed!");
 
             // Increment the game round.
             int round = PlayerPrefs.GetInt("gameRoundNr");
             PlayerPrefs.SetInt("gameRoundNr", round + 1);
+            PlayerPrefs.Save();
 
             // Choose the current scene to reload if there are more rounds to play.
             string nextSceneName;
@@ -455,9 +457,9 @@ public class MemGameManager : MonoBehaviour
             {
                 nextSceneName = nextScene;
             }
-            Debug.Log("Round=" + PlayerPrefs.GetInt("gameRoundNr").ToString() +
-                ", n_rounds=" + nMultiplayerRounds.ToString() +
-                ", next_scene=" + nextSceneName);
+            //Debug.Log("Round=" + PlayerPrefs.GetInt("gameRoundNr").ToString() +
+            //    ", n_rounds=" + nMultiplayerRounds.ToString() +
+            //    ", next_scene=" + nextSceneName);
 
             // Load the selected scene.
             LoadNextScene(nextSceneName);
@@ -661,23 +663,39 @@ public class MemGameManager : MonoBehaviour
                 mostRecentOpponentClaim = Time.time - expStart;
             }
             // Also claim after a number of seconds have passed without
-            // the player claiming anything, but only if fewer than four
-            // stimuli have been claimed by the computer so far.
-            if (opponentCount < 4)
+            // the player claiming anything. This happens more quickly
+            // if fewer than half of the stimuli have been claimed by the
+            // player so far. The final stimulus will never be claimed if the
+            // player has not yet claimed an item.
+            if (opponentCount < trialSetSizes[trialNr] - 1)
             {
                 // The probability of choosing the next stimulus should rise
-                // between 2.5 and 8 seconds. The actual probability curve
+                // between min and max wait seconds. The actual probability curve
                 // depends on the frequency of looping.
-                float passedTimeSinceLastClaim = Time.time -
+                float passedTimeSinceLastClaim = (Time.time - expStart) -
                     mostRecentOpponentClaim;
                 float p;
-                if (passedTimeSinceLastClaim <= 2.5)
+                // Choose the correct set of waiting min/max times.
+                float[] waitMinMax;
+                if (opponentCount < trialSetSizes[trialNr] / 2)
+                {
+                    waitMinMax = opponentWaitUnderHalfMinMax;
+                }
+                else
+                {
+                    waitMinMax = opponentWaitOverHalfMinMax;
+                }
+                // Compute the probability of stopping the wait at the
+                // current time since last claim.
+                if (passedTimeSinceLastClaim <= waitMinMax[0])
                 {
                     p = 0.0f;
                 }
-                else if (passedTimeSinceLastClaim > 2.5 & passedTimeSinceLastClaim < 8)
+                else if (passedTimeSinceLastClaim > waitMinMax[0] &
+                    passedTimeSinceLastClaim < waitMinMax[1])
                 {
-                    p = (passedTimeSinceLastClaim - 2.5f) / (8.0f - 2.5f);
+                    p = (passedTimeSinceLastClaim - waitMinMax[0])
+                        / (waitMinMax[1] - waitMinMax[0]);
                 }
                 else
                 {
@@ -697,9 +715,8 @@ public class MemGameManager : MonoBehaviour
                     mostRecentOpponentClaim = Time.time - expStart;
                 }
             }
-
-            // Wait for a wee bit.
-            yield return new WaitForSeconds(1.0f / loopFreq);
+        // Wait for a wee bit.
+        yield return new WaitForSeconds(1.0f / loopFreq);
         }
     }
 
@@ -862,7 +879,14 @@ public class MemGameManager : MonoBehaviour
         }
         else
         {
-            coinTextMesh.text = "You contributed \n" + nCoin.ToString() + " coins!";
+            if (multiPlayer)
+            {
+                coinTextMesh.text = "You contributed \n" + nCoin.ToString() + " coins!";
+            }
+            else
+            {
+                coinTextMesh.text = "You earned \n" + nCoin.ToString() + " coins!";
+            }
         }
 
         // Initialise the coins.
@@ -977,6 +1001,12 @@ public class MemGameManager : MonoBehaviour
             }
         }
 
+        // If the opponent claimed none, return the maximum possible value.
+        if (opponentClaimed == 0)
+        {
+            return 90;
+        }
+
         // Divide the opponent's short-term memory capacity over the number
         // of items.
         double dklPerStim = (double)opponentCapacity / (double)opponentClaimed;
@@ -991,8 +1021,8 @@ public class MemGameManager : MonoBehaviour
         // Convert to degrees.
         int resp = (int)Math.Round(respRad * Mathf.Rad2Deg);
 
-        Debug.Log("DKL=" + dklPerStim.ToString() + ", SD=" + sd.ToString() +
-            ", resp_rad=" + respRad.ToString() + ", resp_deg" + resp.ToString());
+        //Debug.Log("DKL=" + dklPerStim.ToString() + ", SD=" + sd.ToString() +
+        //    ", resp_rad=" + respRad.ToString() + ", resp_deg" + resp.ToString());
 
         return resp;
     }
@@ -1221,6 +1251,13 @@ public class MemGameManager : MonoBehaviour
     private (int[] x, int[] y) ProduceStimulusLocations(int nStimuli, int minX,
         int maxX, int minY, int maxY, int minDist)
     {
+        //Debug.Log("Finding " + nStimuli.ToString() + " locations with " +
+        //    "Xmin=" + minX.ToString() +
+        //    "Xmax=" + maxX.ToString() +
+        //    "Ymin=" + minY.ToString() +
+        //    "Ymax=" + maxY.ToString()
+        //    );
+
         // Compute the largest possible distance.
         double maxDist = Math.Sqrt(Math.Pow((double)minX - (double)maxX, 2) +
             Math.Pow((double)minY - (double)maxY, 2));
@@ -1236,7 +1273,7 @@ public class MemGameManager : MonoBehaviour
             // to all other orientations, or until we hit the iteration max.
             int j = 0;
             bool stimTooClose = true;
-            while (stimTooClose & j < maxIter)
+            while (stimTooClose & (j < maxIter))
             {
                 // Randomly choose a new location.
                 int newX = rand.Next(minX, maxX);
@@ -1256,11 +1293,13 @@ public class MemGameManager : MonoBehaviour
                 }
                 // Save the new orientation if the orientation is sufficiently
                 // different. Also set the Boolean to break the while loop.
-                if (lowestDist > (double)minDist)
+                // Also stop if this is the last iteration.
+                if ((lowestDist > (double)minDist) | (j == maxIter-1))
                 {
                     stimX[i] = newX;
                     stimY[i] = newY;
                     stimTooClose = false;
+                    Debug.Log("Location " + i.ToString() + " found in " + j.ToString() + " attempts");
                 }
                 // Increment the iteration counter.
                 j++;

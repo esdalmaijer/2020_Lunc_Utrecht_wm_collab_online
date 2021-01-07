@@ -170,7 +170,7 @@ TextMesh:
   m_Anchor: 4
   m_Alignment: 1
   m_TabSize: 4
-  m_FontSize: 70
+  m_FontSize: 50
   m_FontStyle: 0
   m_RichText: 1
   m_Font: {fileID: 12800000, guid: 7dda8dfd016554910a1ba3e1fc9c05b9, type: 3}
@@ -346,7 +346,7 @@ TextMesh:
   m_Anchor: 4
   m_Alignment: 1
   m_TabSize: 4
-  m_FontSize: 70
+  m_FontSize: 50
   m_FontStyle: 0
   m_RichText: 1
   m_Font: {fileID: 12800000, guid: 7dda8dfd016554910a1ba3e1fc9c05b9, type: 3}
@@ -402,7 +402,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 150474726}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -9.5, y: -0.7, z: 0}
+  m_LocalPosition: {x: -7, y: -0.7, z: 0}
   m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
   m_Children: []
   m_Father: {fileID: 2037759585}
@@ -772,7 +772,7 @@ TextMesh:
   m_Anchor: 0
   m_Alignment: 0
   m_TabSize: 4
-  m_FontSize: 50
+  m_FontSize: 42
   m_FontStyle: 0
   m_RichText: 1
   m_Font: {fileID: 12800000, guid: 7dda8dfd016554910a1ba3e1fc9c05b9, type: 3}
@@ -828,7 +828,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 523169693}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -12, y: 5, z: 0}
+  m_LocalPosition: {x: -10, y: 5, z: 0}
   m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
   m_Children: []
   m_Father: {fileID: 2037759585}
@@ -1110,7 +1110,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_BackGroundColor: {r: 0.49803922, g: 0.49803922, b: 0.49803922, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -1183,7 +1183,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1021926281}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 1, y: 5, z: 0}
+  m_LocalPosition: {x: 0, y: 5, z: 0}
   m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
   m_Children: []
   m_Father: {fileID: 2037759585}
@@ -1200,27 +1200,27 @@ TextMesh:
   m_Text: 'We will collect completely anonymous data during
 
     the tasks. The only
-    personal info we ask of you to,
+    personal info we ask of you is
 
-    are your gender and age. We also ask you
-    if you
+    your gender and age. We also ask you if you
+    consent
 
-    consent to the public sharing of your anonymous
+    to the public sharing of your anonymous data, for
 
-    data publicly
-    for the benefit of other researchers.
+    for the benefit
+    of other researchers. By clicking on
 
-    By clicking on "Confirm", you consent
-    with your
+    "Confirm", you consent with your data
+    being
 
-    data being recorded, and the tasks will start.'
+    recorded, and the tasks will start.'
   m_OffsetZ: 0
   m_CharacterSize: 1
   m_LineSpacing: 1
   m_Anchor: 0
   m_Alignment: 0
   m_TabSize: 4
-  m_FontSize: 50
+  m_FontSize: 42
   m_FontStyle: 0
   m_RichText: 1
   m_Font: {fileID: 12800000, guid: 7dda8dfd016554910a1ba3e1fc9c05b9, type: 3}
@@ -2804,7 +2804,7 @@ TextMesh:
   m_Anchor: 3
   m_Alignment: 0
   m_TabSize: 4
-  m_FontSize: 70
+  m_FontSize: 50
   m_FontStyle: 0
   m_RichText: 1
   m_Font: {fileID: 12800000, guid: 7dda8dfd016554910a1ba3e1fc9c05b9, type: 3}
@@ -2860,7 +2860,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1856332308}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 5.5, y: -0.7, z: 0}
+  m_LocalPosition: {x: 4, y: -0.7, z: 0}
   m_LocalScale: {x: 0.09999999, y: 0.09999999, z: 0.09999999}
   m_Children: []
   m_Father: {fileID: 2037759585}
@@ -3107,7 +3107,7 @@ MonoBehaviour:
   genderNonbinaryToggle: {fileID: 626098523}
   genderNotSayingToggle: {fileID: 381231256}
   dataLogger: {fileID: 1338916788}
-  nextScene: 02_memory_test
+  nextScene: 02_memory_test_explanation
 --- !u!4 &2037759585
 Transform:
   m_ObjectHideFlags: 0

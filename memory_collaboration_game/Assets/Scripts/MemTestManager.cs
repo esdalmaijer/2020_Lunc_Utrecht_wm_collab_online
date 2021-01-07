@@ -8,18 +8,15 @@ public class MemTestManager : MonoBehaviour
 {
     // GUI variables.
     [SerializeField] int nTrials;
-    [SerializeField] int[] nStim = { 2, 4 };
+    [SerializeField] int[] nStim = {2,4};
     [SerializeField] int minDist = 200;
     [SerializeField] int minOriDist = 10;
     [SerializeField] float stimDuration = 5.0f;
     [SerializeField] float maintenanceDuration = 3.0f;
-    [SerializeField] float[] interTrialIntervalMinMax = { 1.0f, 1.5f };
+    [SerializeField] float[] interTrialIntervalMinMax = {1.0f, 1.5f};
     [SerializeField] Gabor stimulusPrefab;
     [SerializeField] Database dataLogger;
     [SerializeField] string nextScene;
-
-    [SerializeField] Coin feedbackPrefab;
-    [SerializeField] Treasure_Box Treasure_BoxPrefab;
 
     // VARIABLES.
     // Participant number.
@@ -41,10 +38,6 @@ public class MemTestManager : MonoBehaviour
     private int[] stimX;
     private int[] stimY;
     int targetStimNr;
-    // Feedback 
-    private List<Coin> coinList = new List<Coin>();
-    public static int nCoins; //stores the total score 
-
     // Timing.
     private float expStart;
     private string updateKey = "";
@@ -62,7 +55,7 @@ public class MemTestManager : MonoBehaviour
         expStart = Time.time;
         // Create a dict for storing trial timing, and one for recording when a
         // time should be recorded.
-        string[] keyList =
+        string[] keyList = 
             {"trialStart", "stimOnset", "stimOffset", "respOnset",
                 "respOffset"};
         foreach (string key in keyList)
@@ -81,7 +74,7 @@ public class MemTestManager : MonoBehaviour
         {
             for (int j = 0; j < nTrialsPerSetSize; j++)
             {
-                trialSetSizes[j + i * nTrialsPerSetSize] = nStim[i];
+                trialSetSizes[j + i*nTrialsPerSetSize] = nStim[i];
             }
         }
         // Fill the rest of the trials with randomly sampled set sizes.
@@ -171,9 +164,6 @@ public class MemTestManager : MonoBehaviour
         // Record the trial start.
         trialTiming["trialStart"] = Time.time;
 
-        // Delete Feedback from previous trial. 
-        DeleteFeedback();
-
         // Show the stimuli.
         ShowStimuli();
         // Wait for a the stimulus duration.
@@ -197,16 +187,12 @@ public class MemTestManager : MonoBehaviour
 
         // TODO: Show feedback. You can use the respError variable for this,
         // as it was updated when the response was recorded.
-        ShowFeedback();
-
-        //DeleteFeedback(); >> werkt niet hier, want dan is de computer zo snel met verwijderen dat feedback niet zichtbaar is
-        // moet iets van een tijdsinterval hebben. (nu staat DeleteFeedback() voor ShowStimuli(). 
 
         // Wait for the inter-trial interval (randomly chosen between min/max).
         System.Random rand = new System.Random();
         int intervalMilliseconds = rand.Next(
-            (int)interTrialIntervalMinMax[0] * 1000,
-            (int)interTrialIntervalMinMax[1] * 1000);
+            (int)interTrialIntervalMinMax[0]*1000,
+            (int)interTrialIntervalMinMax[1]*1000);
         float intervalSeconds = (float)intervalMilliseconds / 1000.0f;
         yield return new WaitForSeconds(intervalSeconds);
 
@@ -276,48 +262,7 @@ public class MemTestManager : MonoBehaviour
         updateKey = "stimOffset";
     }
 
-    private void ShowFeedback()
-    {
-
-        //Instantiate(Treasure_BoxPrefab);
-        int nCoin = 0;
-
-        if (respError < 14)
-        {
-            // 3 coins
-            nCoin = 3;
-        }
-        if (respError > 14 && respError < 44)
-        {
-            // 2 coins 
-            nCoin = 2;
-        }
-        if (respError > 45 && respError < 74)
-        {
-            // 1 coin 
-            nCoin = 1;
-        }
-        if (respError > 75)
-        {
-            //0 coins
-            nCoin = 0;
-        }
-
-        // original position of the coin prefab
-        Vector3 coinposition = new Vector3(-6, 3, 0);
-
-        for (int i = 0; i < nCoin; i++)
-        {
-            // start position changes slightly for every new coin. 
-            coinposition.x = coinposition.x + i;
-            feedbackPrefab.changetarget(false);
-            coinList.Add(Instantiate(feedbackPrefab, coinposition, transform.rotation));
-        }
-        // store number of coins in variable nCoins
-        nCoins = nCoins + coinList.Count;
-    }
-
-    public void DeleteStimuli()
+    private void DeleteStimuli()
     {
         // Delete all stimuli.
         foreach (Gabor stim in stimList)
@@ -327,19 +272,6 @@ public class MemTestManager : MonoBehaviour
         // Reset the stimulus list.
         stimList = new List<Gabor>();
     }
-
-    
-    private void DeleteFeedback()
-    {
-        foreach (Coin feedbackPrefab in coinList)
-        {
-            Destroy(feedbackPrefab.gameObject);
-        }     
-        coinList = new List<Coin>();
-
-    }
-    
-   
 
     // RESPONSE-RELATED FUNCTIONS
     private void StartResponsePhase()
